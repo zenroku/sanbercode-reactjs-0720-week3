@@ -2,12 +2,15 @@ import React from 'react';
 // import logo from './logo.svg';
 import './App.css';
 import TableComp from './tugas11/TableComp';
+import TimerLifeCycle from './tugas12/TimerLifeCycle';
 
 function App() {
   return (
     <div className="App">
       {/* tugas 11 below this*/}
       <TableComp />
+      {/* tugas 12 below this */}
+      <TimerLifeCycle />
     </div>
   );
 }
