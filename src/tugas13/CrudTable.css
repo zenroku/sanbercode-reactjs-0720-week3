@@ -1,0 +1,31 @@
+.dataBuah {
+    margin: auto;
+    width: 750px;
+    border: 1px solid black;
+}
+
+td, th, tr {
+    border: 0,7px solid white;
+}
+
+.dataBuah > thead tr th {
+    background-color: #ada9a6;
+}
+
+.dataBuah > tbody td, tr {
+    font-weight: 500;
+    background-color: #ff7f50;
+}
+
+td {
+    text-align: left;
+}
+
+.form {
+    margin: auto;
+    width: 20%;
+}
+
+button {
+    text-align: center;
+}
