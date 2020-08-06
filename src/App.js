@@ -3,7 +3,8 @@ import React from 'react';
 import './App.css';
 // import TableComp from './tugas11/TableComp';
 // import TimerLifeCycle from './tugas12/TimerLifeCycle';
-import CrudTable from './tugas13/CrudTable';
+// import CrudTable from './tugas13/CrudTable';
+import RestAPI from './tugas14/RestAPI';
 
 function App() {
   return (
@@ -13,7 +14,9 @@ function App() {
       {/* tugas 12 below this */}
       {/* <TimerLifeCycle /> */}
       {/* tugas 13 below this */}
-      <CrudTable />
+      {/* <CrudTable /> */}
+      {/* tugas 14 below this */}
+      <RestAPI />
     </div>
   );
 }
