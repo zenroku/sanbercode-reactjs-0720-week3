@@ -1,81 +1,101 @@
-import React, { useState, useEffect, useReducer } from 'react';
-import './RestAPI.css';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react'
+import './RestAPI.css'
+import axios from 'axios'
 
 const RestAPI = () => {
-    const [dataBuah, setDataBuah] = useState([])
-    const [inputUser, setInputUser] = useReducer(
-        (state, newState) => ({ ...state, ...newState }),
-        {
-            name: '',
-            price: '',
-            weight: 0,
-        }
-    );
+    const [dataBuah, setDataBuah] = useState(null)
+    const [inputUser, setInputUser] = useState({ name: '', price: '', weight: '' })
+    const [selectedId, setSelectedId] = useState(0)
+    const [isUpdate, setIsUpdate] = useState(false)
 
     useEffect(() => {
-        axios.get('http://backendexample.sanbercloud.com/api/fruits')
-            .then(res => {
-                setDataBuah(res.data.map(e => {
-                    return {
-                        id: e.id,
-                        nama: e.name,
-                        harga: e.price,
-                        berat: e.weight
-                    }
-                }))
-            })
-            .catch(err => (console.log(err)))
-    })
+        if (dataBuah === null) {
+            axios.get('http://backendexample.sanbercloud.com/api/fruits')
+                .then(res => {
+                    setDataBuah(res.data.map(el => { return { id: el.id, name: el.name, price: el.price, weight: el.weight } }))
+                })
+        }
+    }, [dataBuah])
 
     const handleInput = (event) => {
-        const name = event.target.name
-        const newValue = event.target.value
-        setInputUser({ [name]: newValue })
+        const typeOfInput = event.target.name
+
+        switch (typeOfInput) {
+            case 'name':
+                {
+                    setInputUser({ ...inputUser, name: event.target.value });
+                    break
+                }
+            case 'price':
+                {
+                    setInputUser({ ...inputUser, price: event.target.value });
+                    break
+                }
+            case 'weight':
+                {
+                    setInputUser({ ...inputUser, weight: event.target.value });
+                    break
+                }
+            default:
+                { break; }
+        }
     }
 
     const handleSubmit = (event) => {
         event.preventDefault()
-        const names = event.target.name
-        const getData = inputUser
-        let nama = getData.name
-        let harga = getData.price
-        let parseBerat = parseInt(getData.weight)
-        let newInput = {
-            name: nama,
-            price: harga,
-            weight: parseBerat
+
+        if (isUpdate) {
+            axios.put(`http://backendexample.sanbercloud.com/api/fruits/${selectedId}`, { name: inputUser.name, price: inputUser.price, weight: inputUser.weight })
+                .then(() => {
+                    let fruit = dataBuah.find(el => el.id === selectedId)
+                    fruit.name = inputUser.name
+                    fruit.price = inputUser.price
+                    fruit.weight = inputUser.weight
+                    setDataBuah([...dataBuah])
+
+                })
+
+        } else {
+            axios.post('http://backendexample.sanbercloud.com/api/fruits', { name: inputUser.name, price: inputUser.price, weight: inputUser.weight })
+                .then(res => {
+                    setDataBuah([
+                        ...dataBuah,
+                        {
+                            id: res.data.id,
+                            name: res.data.name,
+                            price: res.data.price,
+                            weight: res.data.weight
+                        }
+                    ])
+                })
+                .catch(err => {
+                    console.log(err)
+                })
         }
-        axios.post('http://backendexample.sanbercloud.com/api/fruits', { newInput })
-            .then(res => {
-                console.log(res)
-            })
-            .catch(err => {
-                console.log(err)
-            })
-        setInputUser({ [names]: '' })
+        setIsUpdate(false)
+        setSelectedId(0)
+        setInputUser({ name: '', price: '', weight: '' })
     }
 
-    const handleEdit = (data) => {
-        const id = parseInt(data.target.value)
-        const filterData = dataBuah.filter(elm => elm.id = id)
-        console.log(filterData)
+
+    const handleEdit = (event) => {
+        const idDataBuah = parseInt(event.target.value)
+        const filterData = dataBuah.find(elm => elm.id === idDataBuah)
         setInputUser({
-            name: filterData.nama,
-            price: filterData.harga,
-            weight: filterData.berat,
+            name: filterData.name,
+            price: filterData.price,
+            weight: filterData.weight,
         })
+        setSelectedId(idDataBuah)
+        setIsUpdate(true)
     }
 
     const handleDelete = (event) => {
         const idBuah = parseInt(event.target.value)
-        const newDataBuah = dataBuah.filter(idx => idBuah !== idx)
+        const newDataBuah = dataBuah.filter(idx => idx !== idBuah)
         axios.delete(`http://backendexample.sanbercloud.com/api/fruits/${idBuah}`)
             .then(res => {
                 console.log(res)
-            })
-            .catch(err => {
-                console.log(err)
             })
         setDataBuah([...newDataBuah])
     }
@@ -96,20 +116,18 @@ const RestAPI = () => {
                     </thead>
                     <tbody>
                         {
-                            dataBuah.map(el => {
+                            dataBuah !== null && dataBuah.map((el, index) => {
                                 return (
-
-                                    <tr key={el.id}>
-                                        <td>{el.nama}</td>
-                                        <td>{el.harga}</td>
-                                        <td>{el.berat}</td>
+                                    <tr key={index}>
+                                        <td>{el.name}</td>
+                                        <td>{el.price}</td>
+                                        <td>{el.weight}</td>
                                         <td style={{ textAlign: 'center' }}>
                                             <button onClick={handleDelete} value={el.id}>Hapus</button>
                                             <button onClick={handleEdit} value={el.id}>Edit</button>
                                         </td>
                                     </tr>
                                 )
-
                             })
                         }
                     </tbody>
