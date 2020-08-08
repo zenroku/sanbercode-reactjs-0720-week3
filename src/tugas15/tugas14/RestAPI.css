@@ -1,0 +1,21 @@
+.tableData {
+    width: 40%;
+    border: 1px solid lightgrey;
+    margin: auto;
+    text-align: left;
+}
+
+thead {
+    background-color: rgb(165, 164, 164);
+}
+
+.formInput {
+    border: 1px solid lightgrey;
+    margin: auto;
+    width: 40%;
+    overflow: auto;
+}
+form {
+    display: flex;
+    flex-direction: column;
+}
